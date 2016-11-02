@@ -1,6 +1,10 @@
 package wzh.http;
 
+import org.htmlparser.Node;
 import org.htmlparser.Parser;
+import org.htmlparser.filters.HasAttributeFilter;
+import org.htmlparser.nodes.TagNode;
+import org.htmlparser.util.NodeList;
 import org.htmlparser.util.ParserException;
 
 public class main {
@@ -17,12 +21,19 @@ public class main {
 //		String sr=HttpRequest.sendPost("https://arms3.onezero.com/login_check", "_csrf_token=vtgcJSpa_Wi6l_WHHRhv-QZ5rUhDUUXQhiCn-KRBZc0&_username=shawn.peng%40gmimarkets.com&_password=456456&_submit=");
 //        System.out.println(sr);
         
-        String s=HttpRequest.sendGet("https://arms3.onezero.com/login", "");
-		System.out.println(s);
+//        String s=HttpRequest.sendGet("https://arms3.onezero.com/login", "");
+        String s=HttpRequest.sendGet("https://arms3.onezero.com", "");
+//		System.out.println(s);
 		
+        System.out.println();
+        
 		try {
 			Parser parser=new Parser(s);
+			HasAttributeFilter filter = new HasAttributeFilter("id","_submit");
+			NodeList nodeList=parser.extractAllNodesThatMatch(filter);
 			
+//			TagNode tag = (TagNode)nodeList.elementAt(0);
+			System.out.println(nodeList.elementAt(0).getNextSibling().getText());
 			
 		} catch (ParserException e) {
 			// TODO Auto-generated catch block
