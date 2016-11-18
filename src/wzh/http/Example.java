@@ -3,14 +3,17 @@
  */
 package wzh.http;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 /**For test
  * @author lankey
@@ -20,12 +23,14 @@ public class Example {
 
 	/**
 	 * @param args
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		
 //		CloseableHttpClient httpclient = HttpClients.createDefault();
-//		HttpGet httpGet = new HttpGet("http://targethost/homepage");
+//		HttpGet httpGet = new HttpGet("http://www.google.com");
+//		httpGet.setHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393");
 //		CloseableHttpResponse response1 = httpclient.execute(httpGet);
 //		// The underlying HTTP connection is still held by the response object
 //		// to allow the response content to be streamed directly from the network socket.
@@ -47,11 +52,11 @@ public class Example {
 		
 		//执行一个GET请求,同时设置Timeout参数并将响应内容作为String返回  
         String response;
-        
 		try {
-			response = Request.Get("http://baidu.com")  
+			response = Request.Get("http://www.baidu.com")  
 			        .connectTimeout(1000)  
-			        .socketTimeout(1000)  
+			        .socketTimeout(1000)
+			        .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393")
 			        .execute().returnContent().asString();
 			System.out.println(response);
 		} catch (ClientProtocolException e) {
@@ -64,7 +69,7 @@ public class Example {
         
 		//执行一个GET请求,同时设置Timeout参数并将响应内容作为String返回  
 		try {
-			response = Request.Get("http://baidu.com")  
+			response = Request.Get("http://www.baidu.com")  
 			        .connectTimeout(1000)  
 			        .socketTimeout(1000)  
 			        .execute().returnResponse().toString();

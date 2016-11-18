@@ -28,6 +28,10 @@ public class main {
         String html=HttpRequest.sendGet("https://arms3.onezero.com", "");
 //		System.out.println(s);
 		
+        
+        String s=HttpRequest.sendGet("http://www.baidu.com", "");
+        System.out.println(s);
+        
         System.out.println();
         
 //		try {
