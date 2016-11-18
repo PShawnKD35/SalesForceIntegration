@@ -13,7 +13,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 /**For test
  * @author lankey
@@ -56,8 +55,8 @@ public class Example {
 			response = Request.Get("http://www.baidu.com")  
 			        .connectTimeout(1000)  
 			        .socketTimeout(1000)
-			        .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393")
-			        .execute().returnContent().asString();
+//			        .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393")
+			        .execute().returnContent().asString(org.apache.http.Consts.UTF_8);
 			System.out.println(response);
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
