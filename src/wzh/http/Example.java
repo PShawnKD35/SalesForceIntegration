@@ -47,6 +47,7 @@ public class Example {
 		
 		//执行一个GET请求,同时设置Timeout参数并将响应内容作为String返回  
         String response;
+        
 		try {
 			response = Request.Get("http://baidu.com")  
 			        .connectTimeout(1000)  
@@ -61,6 +62,20 @@ public class Example {
 			e.printStackTrace();
 		}
         
+		//执行一个GET请求,同时设置Timeout参数并将响应内容作为String返回  
+		try {
+			response = Request.Get("http://baidu.com")  
+			        .connectTimeout(1000)  
+			        .socketTimeout(1000)  
+			        .execute().returnResponse().toString();
+			System.out.println(response);
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 
 	}
