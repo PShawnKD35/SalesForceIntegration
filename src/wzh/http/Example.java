@@ -44,7 +44,8 @@ public class Example {
 //		    response1.close();
 //		}
 		
-		 //执行一个GET请求,同时设置Timeout参数并将响应内容作为String返回  
+		
+		//执行一个GET请求,同时设置Timeout参数并将响应内容作为String返回  
         String response;
 		try {
 			response = Request.Get("http://baidu.com")  
