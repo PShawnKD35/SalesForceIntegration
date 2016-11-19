@@ -1,13 +1,18 @@
 package wzh.http;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
+import org.apache.http.message.BasicNameValuePair;
 import org.htmlparser.Node;
 import org.htmlparser.Parser;
 import org.htmlparser.filters.HasAttributeFilter;
@@ -71,16 +76,19 @@ public class main {
 //        
 ////        String s=HttpRequest.sendGet("https://www.baidu.com/s", "ie=utf-8&f=8&rsv_bp=0&rsv_idx=1&tn=baidu&wd=aaa&rsv_pq=fb3fd7960002d255&rsv_t=e005igCXF8ZJEy8ehCuX4OvIL2qLVepa0FoRFjmO2gfjWx14cIyYkRndI5g&rqlang=cn&rsv_enter=0&rsv_sug3=4&rsv_sug1=1&rsv_sug7=100&inputT=1273&rsv_sug4=1512");
 ////		System.out.println(s);
-		
+//		
 		String line = "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
-		System.out.println(line);
+//		System.out.println(line);		
 		
-		
-		
-		String text;
-		Response response;
-		try {
+		try {			
+			String text;
+			Document document;
+			Elements elements;
+			Element element;
+			HttpResponse httpResponse;
+			Response response;
 			
+			//拿登陆使用的_csrf_token
 			text = Request.Get("https://arms3.onezero.com/login")
 			       .connectTimeout(1000)
 			       .socketTimeout(1000)
@@ -88,50 +96,73 @@ public class main {
 			       .execute()
 			       .returnContent().asString(Consts.UTF_8);
 			
-			Document doc = Jsoup.parse(text);
-			Elements eles = doc.getElementsByAttributeValue("name", "_csrf_token");
-			Element ele = eles.last();
-			text = ele.attr("value");
+			document = Jsoup.parse(text);
+			elements = document.getElementsByAttributeValue("name", "_csrf_token");
+			element = elements.last();
+			text = element.attr("value");
 			System.out.println("csrf = " + text);
 			System.out.println(line);
 			
 			
-			response = Request.Post("https://arms3.onezero.com/login_check")  
-			        .connectTimeout(1000)  
-			        .socketTimeout(1000)			        
-			        .addHeader("_csrf_token", text)
-			        .addHeader("_username", "shawn.peng@gmimarkets.com")
-			        .addHeader("_password","456456")
-			        .addHeader("_submit", "")
+			//设置登录参数  
+	        List<NameValuePair> formParams = new ArrayList<NameValuePair>();
+	        formParams.add(new BasicNameValuePair("_csrf_token", text));
+	        formParams.add(new BasicNameValuePair("_username", "shawn.peng@gmimarkets.com")); 
+	        formParams.add(new BasicNameValuePair("_password","456456"));
+	        formParams.add(new BasicNameValuePair("_submit", ""));
+//	        UrlEncodedFormEntity entity1 = new UrlEncodedFormEntity(formParams, "UTF-8");
+			
+			//登陆拿Cookie
+	        response = Request.Post("https://arms3.onezero.com/login_check")  
+			        .connectTimeout(20000)  
+			        .socketTimeout(20000)			        
+			        .bodyForm(formParams, Consts.UTF_8)
 			        .execute();
 			
-			HttpResponse hr=response.returnResponse();
-			System.out.println(hr.getStatusLine());			
-			Header[] hs = hr.getAllHeaders();
-			for(Header h:hs)
+			//拿Cookie
+			httpResponse=response.returnResponse();
+			System.out.println(httpResponse.getStatusLine());			
+			Header[] headers = httpResponse.getAllHeaders();
+			for(Header h:headers)
 				System.out.println(h.getName()	+ " ===> " + h.getValue());				
 			
 			System.out.println(line);
-			hs = hr.getHeaders("Set-Cookie");
-			text = hs[0].getName() + " ===> " + hs[0].getValue();
+			headers = httpResponse.getHeaders("Set-Cookie");
+			text = headers[0].getName() + " ===> " + headers[0].getValue();
 			
 			System.out.println(text);
 			System.out.println(line);
 			
-			String cookie = hs[0].getValue().split(";", 2)[0];
+			String cookie = headers[0].getValue().split(";", 2)[0];
 			System.out.println("Cookie ===> " + cookie);
 			System.out.println(line);
 			
-			Request rq = Request.Get("https://arms3.onezero.com/login")  
+			//登陆成功后要开始搞事情了：搜ae147这个groupPermission
+			String queryPermissionGroup = "ae125";
+			String search = queryPermissionGroup+"-2";
+			response = Request.Get("https://arms3.onezero.com/broker/list-permission-groups?search=" + search)  
 			        .connectTimeout(1000)  
 			        .socketTimeout(1000)
-			        .addHeader("Cookie", cookie);
+			        .addHeader("Cookie", cookie)
+			        .addHeader("Cookie", "PHPSESSID=h6a4fu64v9ob9ffbf287d0di24")
+			        .execute();
 			        
-			text = rq
-		        .execute()
-		        .returnContent().asString(Consts.UTF_8);
-			System.out.println(text);	
-			        
+			text = response.returnContent().asString(Consts.UTF_8);
+			
+			System.out.println(text);
+			
+			
+			//解析HTML，搜某个PermissionGroup的实际地址
+			System.out.println(line);
+			document = Jsoup.parse(text);
+			elements=document.getElementsMatchingOwnText(search);
+			if(!elements.isEmpty()){			
+				element=elements.first();
+				text = element.attributes().get("href");			
+				System.out.println("地址： " + text);			
+			}else{
+				System.out.println("没找到" + search);
+			}
 
 			
 		} catch (ClientProtocolException e) {
@@ -141,13 +172,6 @@ public class main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		
-		
-		
 		
 		
     }
