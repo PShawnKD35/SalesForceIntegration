@@ -79,7 +79,7 @@ public class main {
 ////		System.out.println(s);
 //		
 		String line = "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
-//		System.out.println(line);		
+		System.out.println(line);		
 		
 		try {			
 			String text;
@@ -93,15 +93,19 @@ public class main {
 			
 			//拿登陆使用的_csrf_token
 			text = Request.Get("https://arms3.onezero.com/login")
-			       .connectTimeout(1000)
-			       .socketTimeout(1000)
-//			       .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393")
-			       .execute()
-			       .returnContent().asString(Consts.UTF_8);
-			
+					.connectTimeout(20000)  
+					.socketTimeout(20000)
+//					.addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393")
+					.execute()
+					.returnContent().asString(Consts.UTF_8);
+
 			document = Jsoup.parse(text);
 			elements = document.getElementsByAttributeValue("name", "_csrf_token");
-			element = elements.last();
+			if(elements.isEmpty()){
+				System.out.println("can't find csrf token");
+				return;
+			}
+			element = elements.first();
 			text = element.attr("value");
 			System.out.println("csrf = " + text);
 			System.out.println(line);
@@ -151,8 +155,8 @@ public class main {
 			String queryPermissionGroup = "ae125";
 			String search = queryPermissionGroup+"-2";
 			response = Request.Get("https://arms3.onezero.com/broker/list-permission-groups?search=" + search)  
-			        .connectTimeout(1000)  
-			        .socketTimeout(1000)
+			        .connectTimeout(10000)  
+			        .socketTimeout(10000)
 			        .addHeader("Cookie", cookie)
 			        .addHeader("Cookie", "PHPSESSID=h6a4fu64v9ob9ffbf287d0di24")
 			        .execute();
