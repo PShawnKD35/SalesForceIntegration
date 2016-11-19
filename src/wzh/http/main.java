@@ -10,6 +10,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.message.BasicNameValuePair;
@@ -88,6 +89,8 @@ public class main {
 			HttpResponse httpResponse;
 			Response response;
 			
+			
+			
 			//拿登陆使用的_csrf_token
 			text = Request.Get("https://arms3.onezero.com/login")
 			       .connectTimeout(1000)
@@ -104,19 +107,26 @@ public class main {
 			System.out.println(line);
 			
 			
-			//设置登录参数  
-	        List<NameValuePair> formParams = new ArrayList<NameValuePair>();
-	        formParams.add(new BasicNameValuePair("_csrf_token", text));
-	        formParams.add(new BasicNameValuePair("_username", "shawn.peng@gmimarkets.com")); 
-	        formParams.add(new BasicNameValuePair("_password","456456"));
-	        formParams.add(new BasicNameValuePair("_submit", ""));
-//	        UrlEncodedFormEntity entity1 = new UrlEncodedFormEntity(formParams, "UTF-8");
+			//设置登录参数
+			List forms = Form.form()
+					.add("_csrf_token", text)
+					.add("_username", "shawn.peng@gmimarkets.com")
+					.add("_password","456456")
+					.add("_submit", "")
+					.build();
+			
+//	        List<NameValuePair> forms = new ArrayList<NameValuePair>();
+//	        forms.add(new BasicNameValuePair("_csrf_token", text));
+//	        forms.add(new BasicNameValuePair("_username", "shawn.peng@gmimarkets.com")); 
+//	        forms.add(new BasicNameValuePair("_password","456456"));
+//	        forms.add(new BasicNameValuePair("_submit", ""));
+////	        UrlEncodedFormEntity entity1 = new UrlEncodedFormEntity(forms, "UTF-8");
 			
 			//登陆拿Cookie
 	        response = Request.Post("https://arms3.onezero.com/login_check")  
 			        .connectTimeout(20000)  
 			        .socketTimeout(20000)			        
-			        .bodyForm(formParams, Consts.UTF_8)
+			        .bodyForm(forms, Consts.UTF_8)
 			        .execute();
 			
 			//拿Cookie
@@ -147,11 +157,12 @@ public class main {
 			        .addHeader("Cookie", "PHPSESSID=h6a4fu64v9ob9ffbf287d0di24")
 			        .execute();
 			        
+//			text = response.returnResponse().getStatusLine().toString();
+//			System.out.println(text + "\r\n" + line);
 			text = response.returnContent().asString(Consts.UTF_8);
 			
 			System.out.println(text);
-			
-			
+						
 			//解析HTML，搜某个PermissionGroup的实际地址
 			System.out.println(line);
 			document = Jsoup.parse(text);
@@ -163,7 +174,6 @@ public class main {
 			}else{
 				System.out.println("没找到" + search);
 			}
-
 			
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block

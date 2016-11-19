@@ -3,16 +3,30 @@
  */
 package wzh.http;
 
+import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**For test
  * @author lankey
@@ -49,38 +63,40 @@ public class Example {
 //		}
 		
 		
-		//执行一个GET请求,同时设置Timeout参数并将响应内容作为String返回  
-        String response;
-		try {
-			response = Request.Get("http://www.baidu.com")  
-			        .connectTimeout(1000)  
-			        .socketTimeout(1000)
-//			        .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393")
-			        .execute().returnContent().asString(org.apache.http.Consts.UTF_8);
-			System.out.println(response);
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-		//执行一个GET请求,同时设置Timeout参数并将响应内容作为String返回  
-		try {
-			response = Request.Get("http://www.baidu.com")  
-			        .connectTimeout(1000)  
-			        .socketTimeout(1000)  
-			        .execute().returnResponse().toString();
-			System.out.println(response);
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Document result = Request.Get("http://www.baidu.com").execute()
+				.handleResponse(new ResponseHandler<Document>() {
+
+					public Document handleResponse(final HttpResponse response) throws IOException {
+						StatusLine statusLine = response.getStatusLine();
+						HttpEntity entity = response.getEntity();
+						if (statusLine.getStatusCode() >= 300) {
+							throw new HttpResponseException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
+						}
+						if (entity == null) {
+							throw new ClientProtocolException("Response contains no content");
+						}
+						DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+						try {
+							DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+							ContentType contentType = ContentType.getOrDefault(entity);
+							if (!contentType.equals(ContentType.APPLICATION_XML)) {
+								throw new ClientProtocolException("Unexpected content type:" + contentType);
+							}
+							Charset charset = contentType.getCharset();
+							if (charset == null) {
+								charset = Consts.UTF_8;
+							}
+							return docBuilder.parse(entity.getContent(), charset.name());
+						} catch (ParserConfigurationException ex) {
+							throw new IllegalStateException(ex);
+						} catch (SAXException ex) {
+							throw new ClientProtocolException("Malformed XML document", ex);
+						}
+					}
+
+				});
 		
+		System.out.println(result.toString());
 
 	}
 
