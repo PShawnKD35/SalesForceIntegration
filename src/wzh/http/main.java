@@ -136,11 +136,18 @@ public class main {
 			//拿Cookie
 			httpResponse=response.returnResponse();
 			System.out.println(httpResponse.getStatusLine());			
-			Header[] headers = httpResponse.getAllHeaders();
-			for(Header h:headers)
-				System.out.println(h.getName()	+ " ===> " + h.getValue());				
+			Header[] headers = httpResponse.getAllHeaders();			
+			for (Header h : headers)
+				System.out.println(h.getName() + " ===> " + h.getValue());
 			
 			System.out.println(line);
+			//检查登录是否成功，即看redirect的地址有没有问题
+			headers = httpResponse.getHeaders("location");
+			if (headers[0].getValue() != "https://arms3.onezero.com"){
+				System.out.println("登陆失败，返回地址为： " + headers[0].getValue() + "\r\n请检查！") ;
+				return;
+			}
+			//打印Cookie
 			headers = httpResponse.getHeaders("Set-Cookie");
 			text = headers[0].getName() + " ===> " + headers[0].getValue();
 			
