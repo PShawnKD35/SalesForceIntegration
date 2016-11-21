@@ -172,7 +172,7 @@ public class main {
 			        .connectTimeout(10000)  
 			        .socketTimeout(10000)
 			        .addHeader("Cookie", cookie)
-			        .addHeader("Cookie", "PHPSESSID=h6a4fu64v9ob9ffbf287d0di24")
+//			        .addHeader("Cookie", "PHPSESSID=h6a4fu64v9ob9ffbf287d0di24")
 			        .execute();
 			        
 //			text = response.returnResponse().getStatusLine().toString();
