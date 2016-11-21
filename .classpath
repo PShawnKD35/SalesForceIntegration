@@ -17,7 +17,7 @@
 	<classpathentry kind="lib" path="lib/httpclient/commons-logging-1.2.jar" sourcepath="docs/httpcomponents-client-4.5.2-src.zip"/>
 	<classpathentry kind="lib" path="lib/httpclient/httpclient-cache-4.5.2.jar" sourcepath="docs/httpcomponents-client-4.5.2-src.zip"/>
 	<classpathentry kind="lib" path="lib/httpclient/httpclient-win-4.5.2.jar" sourcepath="docs/httpcomponents-client-4.5.2-src.zip"/>
-	<classpathentry kind="lib" path="lib/httpclient/httpcore-4.4.4.jar" sourcepath="docs/httpcomponents-client-4.5.2-src.zip"/>
+	<classpathentry kind="lib" path="lib/httpclient/httpcore-4.4.4.jar" sourcepath="docs/httpcomponents-core-4.4.4-src.zip"/>
 	<classpathentry kind="lib" path="lib/httpclient/httpmime-4.5.2.jar" sourcepath="docs/httpcomponents-client-4.5.2-src.zip"/>
 	<classpathentry kind="lib" path="lib/httpclient/jna-4.1.0.jar" sourcepath="docs/httpcomponents-client-4.5.2-src.zip"/>
 	<classpathentry kind="lib" path="lib/httpclient/jna-platform-4.1.0.jar" sourcepath="docs/httpcomponents-client-4.5.2-src.zip"/>
