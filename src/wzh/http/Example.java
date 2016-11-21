@@ -29,7 +29,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**For test
- * @author lankey
+ * @author Someone else, edited by Shawn Peng.
  *
  */
 public class Example {
