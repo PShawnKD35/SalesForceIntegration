@@ -92,8 +92,6 @@ public class main {
 			Response response;
 			
 			
-			
-			
 			// 拿登陆使用的_csrf_token
 			text = Request.Get("https://arms3.onezero.com/login")
 					.connectTimeout(20000)  
@@ -105,7 +103,7 @@ public class main {
 			document = Jsoup.parse(text);
 			elements = document.getElementsByAttributeValue("name", "_csrf_token");
 			if(elements.isEmpty()){
-				System.out.println("can't find csrf token");
+				System.out.println("Failed to login: unable to find csrf token!");
 				return;
 			}
 			element = elements.first();
