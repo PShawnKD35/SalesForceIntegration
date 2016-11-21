@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * Http类
- * @author Shawn
+ * @author Someone else. Edited by Shawn
  *
  */
 public class HttpRequest {

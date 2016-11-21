@@ -3,6 +3,7 @@ package wzh.http;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.apache.http.Consts;
 import org.apache.http.Header;
@@ -79,7 +80,8 @@ public class main {
 ////		System.out.println(s);
 //		
 		String line = "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
-		System.out.println(line);		
+		System.out.println(line);
+		Scanner input = new Scanner(System.in);
 		
 		try {			
 			String text;
@@ -91,7 +93,8 @@ public class main {
 			
 			
 			
-			//拿登陆使用的_csrf_token
+			
+			// 拿登陆使用的_csrf_token
 			text = Request.Get("https://arms3.onezero.com/login")
 					.connectTimeout(20000)  
 					.socketTimeout(20000)
@@ -108,21 +111,22 @@ public class main {
 			element = elements.first();
 			text = element.attr("value");
 			System.out.println("csrf = " + text);
-			System.out.println(line);
-			
+			System.out.println(line);			
 			
 			//设置登录参数
+			System.out.println("Please input your ARMS3 password:");
+			String pw = input.nextLine(); //从键盘读取密码
 			List forms = Form.form()
 					.add("_csrf_token", text)
 					.add("_username", "shawn.peng@gmimarkets.com")
-					.add("_password","456456")
+					.add("_password", pw)
 					.add("_submit", "")
 					.build();
 			
 //	        List<NameValuePair> forms = new ArrayList<NameValuePair>();
 //	        forms.add(new BasicNameValuePair("_csrf_token", text));
-//	        forms.add(new BasicNameValuePair("_username", "shawn.peng@gmimarkets.com")); 
-//	        forms.add(new BasicNameValuePair("_password","456456"));
+//	        forms.add(new BasicNameValuePair("_username", "contoso@gmimarkets.com")); 
+//	        forms.add(new BasicNameValuePair("_password","xxxx"));
 //	        forms.add(new BasicNameValuePair("_submit", ""));
 ////	        UrlEncodedFormEntity entity1 = new UrlEncodedFormEntity(forms, "UTF-8");
 			
@@ -143,7 +147,7 @@ public class main {
 			System.out.println(line);
 			//检查登录是否成功，即看redirect的地址有没有问题
 			headers = httpResponse.getHeaders("location");
-			if (headers[0].getValue() != "https://arms3.onezero.com"){
+			if (headers[0].getValue() != "https://arms3.onezero.com/"){
 				System.out.println("登陆失败，返回地址为： " + headers[0].getValue() + "\r\n请检查！") ;
 				return;
 			}
@@ -194,7 +198,8 @@ public class main {
 			e.printStackTrace();
 		}
 		
-		
+		// 关闭键盘输入
+		input.close();
     }
 
 }
