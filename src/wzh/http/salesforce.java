@@ -9,6 +9,7 @@ import java.util.Scanner;
 import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
@@ -32,11 +33,11 @@ public class salesforce {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-//		createDepositCase(
-//				readDepositDetails(
-//						readInputLine("Please copy the deposit details from Excel and paste here as plain text in one line, columns splited by TAB")));
+		createDepositCase(
+				readDepositDetails(
+						readInputLine("Please copy the deposit details from Excel and paste here as plain text in one line, columns splited by TAB")));
 		
-		createDepositCase(new HashMap<String, String>(20));
+//		createDepositCase(new HashMap<String, String>(20));
 
 	}
 	
@@ -58,7 +59,7 @@ public class salesforce {
 	 * @param depositDetails 从excel表格中复制的入金账户行 字符串
 	 * @return 和表头建立映射的map 
 	 */
-	public static Map readDepositDetails(String depositDetails){
+	public static Map<String, String> readDepositDetails(String depositDetails){
 		System.out.println(line);
 		Map<String, String> depositDetailsMap = new HashMap<String, String>(20);
 		String[] values = depositDetails.split("\t");
@@ -82,7 +83,7 @@ public class salesforce {
 	 * 根据用户入金情况建立/修改 Salesforce 的case
 	 * @param depositDetailsMap
 	 */
-	public static void createDepositCase(Map depositDetailsMap) {
+	public static void createDepositCase(Map<String, String> depositDetailsMap) {
 		System.out.println(line);
 		if (depositDetailsMap == null) return;
 		System.out.println(depositDetailsMap.get("Trader Login"));
@@ -95,6 +96,8 @@ public class salesforce {
 			Element element;
 			HttpResponse httpResponse;
 			Response response;
+			List<NameValuePair> forms;
+			Header[] headers;
 			
 			// 拿登陆使用的cookie
 			httpResponse = Request.Get("https://gmi.my.salesforce.com/")
@@ -106,7 +109,7 @@ public class salesforce {
 			
 			//查看所有header			
 			System.out.println(httpResponse.getStatusLine());			
-			Header[] headers = httpResponse.getAllHeaders();			
+			headers = httpResponse.getAllHeaders();			
 			for (Header h : headers)
 				System.out.println(h.getName() + " ===> " + h.getValue());			
 			System.out.println(line);
@@ -129,7 +132,7 @@ public class salesforce {
 			
 			//设置登录参数
 			String pw = readInputLine("Please input your Salesforce password"); //从键盘读取密码
-			List forms = Form.form()
+			forms = Form.form()
 					.add("un", "shawn.peng@gmimarkets.com")
 					.add("hasRememberUn", "true")
 					.add("useSecure", "true")
@@ -159,6 +162,7 @@ public class salesforce {
 			System.out.println(text);
 			//检查登录是否成功，即看redirect的地址有没有问题			
 			headers = httpResponse.getHeaders("location");
+			System.out.println("☆☆☆☆☆☆☆☆☆☆☆ 登陆成功！☆☆☆☆☆☆☆☆☆☆☆");
 			System.out.println("location: " + headers[0].getValue());
 //			if (headers[0].getValue().split("?", 2)[0] != "https://gmi.my.salesforce.com/secur/frontdoor.jsp"){
 //				System.out.println("登陆失败，返回地址为： " + headers[0].getValue() + "\r\n请检查！") ;
@@ -169,7 +173,7 @@ public class salesforce {
 			for(Header h:headers){
 				text = h.getName() + " ===> " + h.getValue();
 				System.out.println(text);
-				cookie = cookie + ": " + h.getValue().split(";", 2)[0];
+				cookie = cookie + "; " + h.getValue().split(";", 2)[0];
 				if (headers.length != 5) {
 					System.out.println("cookie个数有误，登陆可能未成功，请核实!");
 //					return;
@@ -179,8 +183,8 @@ public class salesforce {
 			System.out.println("Set-Cookie: " + cookie);
 			System.out.println(line);
 			
-			
-			//登陆成功后要开始搞事情了
+//			cookie = "BrowserId=bMnWukcOSNivcwsugMHDCw; inst=APP_6F; rememberUn=false; login=; com.salesforce.LocaleInfo=us; oinfo=\"c3RhdHVzPUFDVElWRSZ0eXBlPTImb2lkPTAwRDkwMDAwMDAwWmNtVA==\"";			
+			// 登陆成功后要开始搞事情了
 			response = Request.Get("https://gmi.my.salesforce.com/_ui/core/chatter/ui/ChatterPage")  
 			        .connectTimeout(10000)  
 			        .socketTimeout(10000)
@@ -192,6 +196,65 @@ public class salesforce {
 			text = response.returnContent().asString(Consts.UTF_8);
 			
 			System.out.println(text);
+			System.out.println(line);
+			
+			// 拿entityID, sysMod, 和ConfirmationToken
+			String caseUrl = "https://gmi.my.salesforce.com?ec=302&startURL=%2F5006F00001IA7KE";
+			text = Request.Get(caseUrl)
+					.addHeader("Cookie", cookie)
+					.execute()
+					.returnContent().asString(Consts.UTF_8);
+			
+			System.out.println("拿case信息\r\n" + line);
+			System.out.println(text);
+			System.out.println(line);
+			String confirmToken = text.split("_CONFIRMATIONTOKEN=", 2)[1]
+					.split("&", 2)[0];
+			String sysMod = text.split("\"sysMod\":\"", 2)[1]
+					.split("\"});")[0];
+			String entityId = caseUrl.split("gmi.my.salesforce.com?ec=302&startURL=%2F")[1];
+			System.out.println("ConfirmationToken, sysMod, entityId:");
+			System.out.println(confirmToken);
+			System.out.println(sysMod);
+			System.out.println(entityId);
+			System.out.println(line);
+			
+			//修改系统自动生成的入金case
+			forms = Form.form()
+					.add("entityId", entityId)
+					.add("sysMod", sysMod)
+					.add("_CONFIRMATIONTOKEN", confirmToken)
+					.add("save", "1")
+		//			.add("cas4", "Fan XuGuang")
+		//			.add("cas4_lkid", "sdafsdf")
+					.add("00N9000000E97Jl", "入金")
+					.add("00N6F00000DtmTt", "Baofoo")
+					.add("00N6F00000DtmTy", depositDetailsMap.get("CCY"))
+					.add("00N6F00000DtmU3", depositDetailsMap.get("Account Input Reference / Notes").split("@ ")[1]) // 计算后的汇率
+					.add("00N90000005QTGA", depositDetailsMap.get("Trader Login"))
+					.add("cas7", "On Hold")
+					.add("cas14", "Deposit") // subject
+					.add("00N6F00000EfzPF", depositDetailsMap.get("Confirmed"))
+					.add("00N90000005QUg3", depositDetailsMap.get("通过"))
+					.add("00N90000005QUii", depositDetailsMap.get("Actual Received"))
+					.add("00N90000005RqF1", "宝付支付")	
+					.add("00N90000005QRqn", depositDetailsMap.get("Deposit Amount"))
+					.build();
+			
+			httpResponse = Request.Post("https://gmi.my.salesforce.com/ui/common/InlineEditEntitySave")
+					.addHeader("Cookie", cookie)
+					.bodyForm(forms, Consts.UTF_8)
+					.execute()
+					.returnResponse();
+			
+			System.out.println("☆☆☆☆☆☆☆☆☆☆☆ 提交入金case修改 ☆☆☆☆☆☆☆☆☆☆☆");
+			System.out.println(httpResponse.getStatusLine());	
+			headers = httpResponse.getAllHeaders();
+			for (Header h : headers)
+				System.out.println(h.getName() + " ===> " + h.getValue());
+			System.out.println(line);
+			System.out.println(EntityUtils.toString(httpResponse.getEntity(), Consts.UTF_8));
+			System.out.println(line);
 			
 			//退出登录
 			httpResponse = Request.Get("https://gmi.my.salesforce.com/secur/logout.jsp")
@@ -200,6 +263,7 @@ public class salesforce {
 			            .returnResponse();
 			
 			//查看headers
+			System.out.println("☆☆☆☆☆☆☆☆☆☆☆ 退出登录！ ☆☆☆☆☆☆☆☆☆☆☆");
 			System.out.println(httpResponse.getStatusLine());			
 			headers = httpResponse.getAllHeaders();			
 			for (Header h : headers)
