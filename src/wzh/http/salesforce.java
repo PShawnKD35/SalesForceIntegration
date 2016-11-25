@@ -1,6 +1,7 @@
 package wzh.http;
 
 import java.io.IOException;
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,10 +15,23 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.cookie.CookieSpec;
+import org.apache.http.cookie.CookieSpecFactory;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -36,11 +50,11 @@ public class salesforce {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		createDepositCase(
-				readDepositDetails(
-						readInputLine("Please copy the deposit details from Excel and paste here as plain text in one line, columns splited by TAB")));
+//		createDepositCase(
+//				readDepositDetails(
+//						readInputLine("Please copy the deposit details from Excel and paste here as plain text in one line, columns splited by TAB")));
 		
-//		createDepositCase(new HashMap<String, String>(20));
+		createDepositCase(new HashMap<String, String>(20));
 
 	}
 	
@@ -105,19 +119,34 @@ public class salesforce {
 			
 			// 转换日期格式成Salesforce格式
 			String dateString = depositDetailsMap.get("Confirmed");
-			try {
-				SimpleDateFormat dateFormat =new SimpleDateFormat("dd/mm/yyyy");
-				Date date = dateFormat.parse(dateString);
-				dateFormat.applyPattern("mm/dd/yyyy");
-				dateString = dateFormat.format(date);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+//			try {
+//				SimpleDateFormat dateFormat =new SimpleDateFormat("dd/mm/yyyy");
+//				Date date = dateFormat.parse(dateString);
+//				dateFormat.applyPattern("mm/dd/yyyy");
+//				dateString = dateFormat.format(date);
+//			} catch (ParseException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			System.out.println("入金日期: " + dateString);
+//			System.out.println(line);
+			
+			//测试自动cookie 登陆
+			CloseableHttpClient httpClient = HttpClients.createDefault();
+			CloseableHttpResponse closeableHttpResponse;
+			HttpClientContext context = new HttpClientContext();
+			CookieStore cookieStore = new BasicCookieStore();
+			context.setCookieStore(cookieStore);
+			
+			HttpGet get = new HttpGet("https://gmi.my.salesforce.com/");
+			closeableHttpResponse = httpClient.execute(get, context);
+			text = EntityUtils.toString(closeableHttpResponse.getEntity(), Consts.UTF_8);
+			closeableHttpResponse.close();
+			List<Cookie> cookies = cookieStore.getCookies();
+			for(Cookie c : cookies){
+				System.out.println(c.getName() + " ---> " + c.getValue());
 			}
-			System.out.println("入金日期: " + dateString);
 			System.out.println(line);
-			
-			
 			
 //			// 拿登陆使用的cookie
 //			httpResponse = Request.Get("https://gmi.my.salesforce.com/")
