@@ -33,11 +33,11 @@ public class salesforce {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		createDepositCase(
-				readDepositDetails(
-						readInputLine("Please copy the deposit details from Excel and paste here as plain text in one line, columns splited by TAB")));
+//		createDepositCase(
+//				readDepositDetails(
+//						readInputLine("Please copy the deposit details from Excel and paste here as plain text in one line, columns splited by TAB")));
 		
-//		createDepositCase(new HashMap<String, String>(20));
+		createDepositCase(new HashMap<String, String>(20));
 
 	}
 	
@@ -198,65 +198,67 @@ public class salesforce {
 //			System.out.println(text);
 //			System.out.println(line);
 			
-			// 拿entityID, sysMod, 和ConfirmationToken
-			String caseUrl = "https://gmi.my.salesforce.com?ec=302&startURL=%2F5006F00001IA7KE";
-			text = Request.Get(caseUrl)
-					.addHeader("Cookie", cookie)
-					.execute()
-					.returnContent().asString(Consts.UTF_8);
-			
-			System.out.println("拿case信息\r\n" + line);
-			System.out.println(text);
-			System.out.println(line);
-			String confirmToken = text.split("_CONFIRMATIONTOKEN=", 2)[1]
-					.split("&", 2)[0];
-			String sysMod = text.split("\"sysMod\":\"", 2)[1]
-					.split("\"}", 2)[0];
-			String entityId = caseUrl.split("startURL=%2F")[1];
-			System.out.println("ConfirmationToken, sysMod, entityId:");
-			System.out.println(confirmToken);
-			System.out.println(sysMod);
-			System.out.println(entityId);
-			System.out.println(line);
-			
-			//修改系统自动生成的入金case
-			forms = Form.form()
-					.add("entityId", entityId)
-					.add("sysMod", sysMod)
-					.add("_CONFIRMATIONTOKEN", confirmToken)
-					.add("save", "1")
-		//			.add("cas4", "Fan XuGuang")
-		//			.add("cas4_lkid", "sdafsdf")
-					.add("00N9000000E97Jl", "入金")
-					.add("00N6F00000DtmTt", "Baofoo")
-					.add("00N6F00000DtmTy", depositDetailsMap.get("CCY"))
-					.add("00N6F00000DtmU3", depositDetailsMap.get("Account Input Reference / Notes").split("@ ")[1]) // 计算后的汇率
-					.add("00N90000005QTGA", depositDetailsMap.get("Trader Login"))
-					.add("cas7", "On Hold")
-					.add("cas14", "Deposit") // subject
-					.add("00N6F00000EfzPF", depositDetailsMap.get("Confirmed"))
-					.add("00N90000005QT62", depositDetailsMap.get("Confirmed"))
-					.add("00N90000005QUg3", depositDetailsMap.get("通过"))
-					.add("00N90000005QUii", depositDetailsMap.get("Actual Received"))
-					.add("00N90000005RqF1", "宝付支付")	
-					.add("00N90000005QRqn", depositDetailsMap.get("Deposit Amount"))
-					.add("cas16", depositDetailsMap.get("Account Input Reference / Notes"))
-					.build();
-			
-			httpResponse = Request.Post("https://gmi.my.salesforce.com/ui/common/InlineEditEntitySave")
-					.addHeader("Cookie", cookie)
-					.bodyForm(forms, Consts.UTF_8)
-					.execute()
-					.returnResponse();
-			
-			System.out.println("☆☆☆☆☆☆☆☆☆☆☆ 提交入金case修改 ☆☆☆☆☆☆☆☆☆☆☆");
-			System.out.println(httpResponse.getStatusLine());	
-			headers = httpResponse.getAllHeaders();
-			for (Header h : headers)
-				System.out.println(h.getName() + " ===> " + h.getValue());
-			System.out.println(line);
-			System.out.println(EntityUtils.toString(httpResponse.getEntity(), Consts.UTF_8));
-			System.out.println(line);
+			String entityId = readInputLine("键入case ID，如: 5006F00001IA7KE");
+//			// 拿entityID, sysMod, 和ConfirmationToken
+//			
+//			String caseUrl = "https://gmi.my.salesforce.com?ec=302&startURL=%2F" + entityId;
+//			text = Request.Get(caseUrl)
+//					.addHeader("Cookie", cookie)
+//					.execute()
+//					.returnContent().asString(Consts.UTF_8);
+//			
+//			System.out.println("拿case信息\r\n" + line);
+//			System.out.println(text);
+//			System.out.println(line);
+//			String confirmToken = text.split("_CONFIRMATIONTOKEN=", 2)[1]
+//					.split("&", 2)[0];
+//			String sysMod = text.split("\"sysMod\":\"", 2)[1]
+//					.split("\"}", 2)[0];
+////			String entityId = caseUrl.split("startURL=%2F")[1];
+//			System.out.println("ConfirmationToken, sysMod, entityId:");
+//			System.out.println(confirmToken);
+//			System.out.println(sysMod);
+//			System.out.println(entityId);
+//			System.out.println(line);
+//			
+//			//修改系统自动生成的入金case
+//			forms = Form.form()
+//					.add("entityId", entityId)
+//					.add("sysMod", sysMod)
+//					.add("_CONFIRMATIONTOKEN", confirmToken)
+//					.add("save", "1")
+//		//			.add("cas4", "Fan XuGuang")
+//		//			.add("cas4_lkid", "sdafsdf")
+//					.add("00N9000000E97Jl", "入金")
+//					.add("00N6F00000DtmTt", "Baofoo")
+//					.add("00N6F00000DtmTy", depositDetailsMap.get("CCY"))
+//					.add("00N6F00000DtmU3", depositDetailsMap.get("Account Input Reference / Notes").split("@ ")[1]) // 计算后的汇率
+//					.add("00N90000005QTGA", depositDetailsMap.get("Trader Login"))
+//					.add("cas7", "On Hold")
+//					.add("cas14", "Deposit") // subject
+//					.add("00N6F00000EfzPF", depositDetailsMap.get("Confirmed"))
+//					.add("00N90000005QT62", depositDetailsMap.get("Confirmed"))
+//					.add("00N90000005QUg3", depositDetailsMap.get("通过"))
+//					.add("00N90000005QUii", depositDetailsMap.get("Actual Received"))
+//					.add("00N90000005RqF1", "宝付支付")	
+//					.add("00N90000005QRqn", depositDetailsMap.get("Deposit Amount"))
+//					.add("cas16", depositDetailsMap.get("Account Input Reference / Notes"))
+//					.build();
+//			
+//			httpResponse = Request.Post("https://gmi.my.salesforce.com/ui/common/InlineEditEntitySave")
+//					.addHeader("Cookie", cookie)
+//					.bodyForm(forms, Consts.UTF_8)
+//					.execute()
+//					.returnResponse();
+//			
+//			System.out.println("☆☆☆☆☆☆☆☆☆☆☆ 提交入金case修改 ☆☆☆☆☆☆☆☆☆☆☆");
+//			System.out.println(httpResponse.getStatusLine());	
+//			headers = httpResponse.getAllHeaders();
+//			for (Header h : headers)
+//				System.out.println(h.getName() + " ===> " + h.getValue());
+//			System.out.println(line);
+//			System.out.println(EntityUtils.toString(httpResponse.getEntity(), Consts.UTF_8));
+//			System.out.println(line);
 			
 //			//退出登录
 //			httpResponse = Request.Get("https://gmi.my.salesforce.com/secur/logout.jsp")
@@ -273,6 +275,38 @@ public class salesforce {
 //			System.out.println(line);
 //			text = EntityUtils.toString(httpResponse.getEntity(), Consts.UTF_8);
 //			System.out.println(text);
+			
+			
+			// 测试移动case到 Back OfficeTeam
+			forms = Form.form()
+					.add("_CONFIRMATIONTOKEN", "VmpFPSxNakF4TmkweE1TMHlPRlF3TURvd01EbzBNQzQ1TkRsYSwtZU90bE5MU1JTdW5tdkVkSDZBU1FULE9UVTBNREk0")
+					.add("id", entityId)
+					.add("ids", entityId)
+					.add("newOwn_mlktp", "case_queue")
+					.add("newOwn_lktp", "case_queue")
+					.add("newOwn_lkold", "null")
+					.add("newOwn_lspf", "0")
+					.add("newOwn_lspfsub", "0")
+					.add("newOwn", "Back OfficeTeam")
+					.add("newOwn_mod", "1")
+					.add("sendMail", "0")
+					.add("save", "1")
+					.build();
+			
+			httpResponse = Request.Post("https://gmi.my.salesforce.com/"+entityId+"/a")
+					.addHeader("Cookie", cookie)
+					.bodyForm(forms, Consts.UTF_8)
+					.execute()
+					.returnResponse();
+			
+			System.out.println("☆☆☆☆☆☆☆☆☆☆☆ 移动case到Back OfficeTeam ☆☆☆☆☆☆☆☆☆☆☆");
+			System.out.println(httpResponse.getStatusLine());	
+			headers = httpResponse.getAllHeaders();
+			for (Header h : headers)
+				System.out.println(h.getName() + " ===> " + h.getValue());
+			System.out.println(line);
+			System.out.println(EntityUtils.toString(httpResponse.getEntity(), Consts.UTF_8));
+			System.out.println(line);			
 			
 			
 		} catch (ClientProtocolException e) {
