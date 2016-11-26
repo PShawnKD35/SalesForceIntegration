@@ -17,11 +17,14 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
@@ -32,6 +35,7 @@ import org.apache.http.cookie.CookieSpecFactory;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -131,23 +135,82 @@ public class salesforce {
 //			System.out.println("入金日期: " + dateString);
 //			System.out.println(line);
 			
-			//测试自动cookie 登陆
-			CloseableHttpClient httpClient = HttpClients.createDefault();
-			CloseableHttpResponse closeableHttpResponse;
-			HttpClientContext context = new HttpClientContext();
-			CookieStore cookieStore = new BasicCookieStore();
-			context.setCookieStore(cookieStore);
 			
-			HttpGet get = new HttpGet("https://gmi.my.salesforce.com/");
-			closeableHttpResponse = httpClient.execute(get, context);
-			text = EntityUtils.toString(closeableHttpResponse.getEntity(), Consts.UTF_8);
-			closeableHttpResponse.close();
-			List<Cookie> cookies = cookieStore.getCookies();
-			for(Cookie c : cookies){
-				System.out.println(c.getName() + " ---> " + c.getValue());
-			}
-			System.out.println(line);
 			
+			/**
+			 * 新方法登陆
+			 */
+//			//测试自动cookie 登陆
+//			LaxRedirectStrategy laxRedirectStrategy = new LaxRedirectStrategy(); // 自动处理post重定向
+//			
+//			CloseableHttpClient httpClient = HttpClients.custom()
+//		            .setRedirectStrategy(laxRedirectStrategy) // 允许重定向的client
+//		            .build();
+//			
+//			CloseableHttpResponse closeableHttpResponse;
+//			HttpClientContext context = new HttpClientContext(); // 用来保存cookies
+//			CookieStore cookieStore = new BasicCookieStore();
+////			context.setCookieStore(cookieStore);
+////			RequestConfig globalConfig = RequestConfig.custom()
+////			        .setCookieSpec(CookieSpecs.STANDARD)
+////			        .build();
+////			context.setRequestConfig(globalConfig); //测试cookie方式
+//			HttpGet get = new HttpGet("https://gmi.my.salesforce.com/");
+//			closeableHttpResponse = httpClient.execute(get, context);
+////			closeableHttpResponse = httpClient.execute(get);
+////			text = EntityUtils.toString(closeableHttpResponse.getEntity(), Consts.UTF_8);
+//			closeableHttpResponse.close();
+////			httpClient.close();
+//			//展示当前cookies
+//			List<Cookie> cookies = cookieStore.getCookies();
+//			for(Cookie c : cookies){
+//				System.out.println(c.getName() + "=" + c.getValue());
+//			}
+//			System.out.println(line);
+////			System.out.println(cookieStore.getCookies().toString());
+////			System.out.println(cookieStore.toString());
+//			
+//			// 设置登录表单
+//			String pw = readInputLine("Please input your Salesforce password"); //从键盘读取密码
+//			forms = Form.form()
+//					.add("un", "shawn.peng@gmimarkets.com")
+//					.add("hasRememberUn", "true")
+//					.add("useSecure", "true")
+//					.add("username", "shawn.peng@gmimarkets.com")
+//					.add("pw", pw)
+//					.add("Login", "登录")
+////					.add("rememberUn", "on")
+//					.build();
+//			//登录
+//			HttpPost post = new HttpPost("https://gmi.my.salesforce.com/");
+//			post.addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393");
+//			UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(forms, Consts.UTF_8);
+//			post.setEntity(formEntity);
+//			
+//			closeableHttpResponse = httpClient.execute(post, context);
+////			closeableHttpResponse = httpClient.execute(post);
+//			System.out.println(closeableHttpResponse.getStatusLine());
+//			
+//			//展示当前cookies
+//			cookies = cookieStore.getCookies();
+//			for(Cookie c : cookies){
+//				System.out.println(c.getName() + "=" + c.getValue());
+//			}
+//			System.out.println(line);
+////			System.out.println(cookieStore.toString());
+////			System.out.println(line);
+//			text = EntityUtils.toString(closeableHttpResponse.getEntity(), Consts.UTF_8);
+//			closeableHttpResponse.close();
+//			System.out.println(text);
+			
+			
+			
+			
+			
+			
+			/**
+			 * 老方法登陆
+			 */
 //			// 拿登陆使用的cookie
 //			httpResponse = Request.Get("https://gmi.my.salesforce.com/")
 //					.connectTimeout(20000)  
@@ -188,8 +251,9 @@ public class salesforce {
 //					.add("username", "shawn.peng@gmimarkets.com")
 //					.add("pw", pw)
 //					.add("Login", "登录")
+////					.add("rememberUn", "on")
 //					.build();
-//			
+////			
 ////			cookie = "BrowserId=Pi2EjrVTQkSI-sAjoTXXgQ";
 //			//登陆拿Cookie		
 //	        httpResponse = Request.Post("https://gmi.my.salesforce.com/")  
@@ -231,6 +295,10 @@ public class salesforce {
 //			System.out.println(line);			
 //			System.out.println("Set-Cookie: " + cookie);
 //			System.out.println(line);
+			
+			
+			
+			
 			
 			cookie = readInputLine("键入cookie");			
 			// 登陆成功后要开始搞事情了
