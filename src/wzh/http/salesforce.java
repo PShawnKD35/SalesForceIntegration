@@ -128,17 +128,17 @@ public class salesforce {
 			
 			// 转换日期格式成Salesforce格式
 			String dateString = depositDetailsMap.get("Confirmed");
-//			try {
-//				SimpleDateFormat dateFormat =new SimpleDateFormat("dd/mm/yyyy");
-//				Date date = dateFormat.parse(dateString);
-//				dateFormat.applyPattern("mm/dd/yyyy");
-//				dateString = dateFormat.format(date);
-//			} catch (ParseException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			System.out.println("入金日期: " + dateString);
-//			System.out.println(line);
+			try {
+				SimpleDateFormat dateFormat =new SimpleDateFormat("dd/mm/yyyy");
+				Date date = dateFormat.parse(dateString);
+				dateFormat.applyPattern("mm/dd/yyyy");
+				dateString = dateFormat.format(date);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("入金日期: " + dateString);
+			System.out.println(line);
 			
 			
 			
