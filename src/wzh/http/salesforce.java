@@ -175,12 +175,13 @@ public class salesforce {
 
 
 			// 设置登录表单
-			String pw = readInputLine("Please input your Salesforce password"); //从键盘读取密码
+			String un = readInputLine("Please input your Salesforce User Name"); //从键盘读取用户名
+			String pw = readInputLine("Please input your Salesforce password"); //读取密码
 			forms = Form.form()
-					.add("un", "shawn.peng@gmimarkets.com")
+					.add("un", un)
 					.add("hasRememberUn", "true")
 					.add("useSecure", "true")
-					.add("username", "shawn.peng@gmimarkets.com")
+					.add("username", un)
 					.add("pw", pw)
 					.add("Login", "登录")
 //					.add("rememberUn", "on")
