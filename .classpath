@@ -2,12 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="lib/htmlparser.jar" sourcepath="docs/HTMLParser-2.0-SNAPSHOT-src.zip">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/web/docs/HTMLParser-2.0-SNAPSHOT-doc.zip!/HTMLParser-2.0-SNAPSHOT/docs/javadoc"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/htmllexer.jar"/>
 	<classpathentry kind="lib" path="lib/jsoup-1.10.1.jar" sourcepath="docs/jsoup-1.10.1-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/web/docs/jsoup-1.10.1-javadoc.jar!/"/>

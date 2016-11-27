@@ -15,12 +15,6 @@ import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.message.BasicNameValuePair;
-import org.htmlparser.Node;
-import org.htmlparser.Parser;
-import org.htmlparser.filters.HasAttributeFilter;
-import org.htmlparser.nodes.TagNode;
-import org.htmlparser.util.NodeList;
-import org.htmlparser.util.ParserException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -53,31 +47,8 @@ public class main {
 ////        String s=HttpRequest.sendGet("http://www.baidu.com", "");
 ////        System.out.println(s);
 //        
-//		
-//		
-//        
 //        System.out.println();
-//        
-////		try {
-////			Parser parser=new Parser(html);
-////			HasAttributeFilter filter = new HasAttributeFilter("id","_submit");
-////			NodeList nodeList=parser.extractAllNodesThatMatch(filter);
-////			
-//////			TagNode tag = (TagNode)nodeList.elementAt(0);
-////			System.out.println(nodeList.elementAt(0).getNextSibling().getText());
-////			
-////		} catch (ParserException e) {
-////			// TODO Auto-generated catch block
-////			e.printStackTrace();
-////		}
-//		
-//		
-//		//String html = "<html><head><title>First parse</title></head>" + "<body><p>Parsed HTML into a doc.</p></body></html>";
-//		Document doc = Jsoup.parse(html);
-//		Element ele=doc.getElementsByAttributeValue("type", "submit").first();
-//		ele=ele.parent().parent();
-//		System.out.println("ownText = " + ele.ownText());
-//		System.out.println("text = " + ele.text());
+//
 //		
 //		
 //        
