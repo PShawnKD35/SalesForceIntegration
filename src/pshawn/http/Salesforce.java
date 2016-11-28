@@ -89,7 +89,8 @@ public class Salesforce {
 				depositExcelRow =readInputLine("Please copy the deposit details from Excel and paste here as plain text in one line, columns splited by TAB. \r\nEnter \"exit\" to end");
 			}
 			
-//			salesforce.editDepositCase(new HashMap<String, String>(20));			
+//			salesforce.editDepositCase(new HashMap<String, String>(20));
+			
 		} finally {
 			// TODO: handle finally clause
 			//登出Salesforce
@@ -152,31 +153,13 @@ public class Salesforce {
 		CloseableHttpResponse closeableHttpResponse;
 		HttpClientContext context = new HttpClientContext(); // 用来保存cookies
 		CookieStore cookieStore = new BasicCookieStore();
-		context.setCookieStore(cookieStore);
-		
-////		// 测试cookie方式
-////		RequestConfig globalConfig = RequestConfig.custom()
-////		        .setCookieSpec(CookieSpecs.STANDARD)
-////		        .build();
-////		context.setRequestConfig(globalConfig);
-//		HttpGet get = new HttpGet("https://gmi.my.salesforce.com/");
-//		closeableHttpResponse = httpClient.execute(get, context);
-//		closeableHttpResponse.close();
-//
-//		//展示当前cookies
-//		List<Cookie> cookies = cookieStore.getCookies();
-//		for(Cookie c : cookies){
-//			System.out.println(c.getName() + "=" + c.getValue());
-//		}
-//		System.out.println(line);
-		
+		context.setCookieStore(cookieStore);		
+
 		
 		// 设置登录表单
 //		String un = readInputLine("Please input your Salesforce User Name"); //从键盘读取用户名
 //		String pw = readInputLine("Please input your Salesforce password"); //读取密码
-		//读用户名密码 从当前程序根目录的SalesforceCredential.txt文件中
-
-		
+				
 		System.out.println("Salesforce User name: " + un + "\r\n" + line);
 		
 		List<NameValuePair> forms = Form.form()
@@ -188,6 +171,7 @@ public class Salesforce {
 				.add("Login", "登录")
 //				.add("rememberUn", "on")
 				.build();
+		
 		//登录
 		HttpPost post = new HttpPost("https://gmi.my.salesforce.com/");
 //		post.addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393");
@@ -198,7 +182,6 @@ public class Salesforce {
 		//展示当前cookies
 		cookie = ""; // 准备把cookie做成Header的形式（String）
 		List<Cookie> cookies = cookieStore.getCookies();
-//		cookieStore.clear(); //并且清除非salesforce.com的其他cookie
 		for(Cookie c : cookies){				
 			String domain = c.getDomain();
 			System.out.println(domain+ "\t" +c.getName() + "=" + c.getValue());
@@ -208,23 +191,14 @@ public class Salesforce {
 			}
 		}
 		System.out.println(line);
-//		System.out.println(cookieStore.toString());
-//		System.out.println(line);
+
 		String text = EntityUtils.toString(closeableHttpResponse.getEntity(), Consts.UTF_8);
 		closeableHttpResponse.close();
 		System.out.println(text);
 		System.out.println(line);
 		
-//		//测试登录是否成功 Fluent API
-//		text = Request.Get("https://gmi.my.salesforce.com/500/o")
-//				.addHeader("Cookie", cookie)
-//				.execute()
-//				.returnContent()
-//				.asString(Consts.UTF_8);
-//		System.out.println(text);
-//		System.out.println(line);
-		
 //		//测试是否登录成功
+////		HttpGet get = new HttpGet("https://gmi.my.salesforce.com/");
 //		URI uri = new URI("https://gmi.my.salesforce.com/500/o");
 //		get.setURI(uri);
 //		closeableHttpResponse = httpClient.execute(get, context);
@@ -300,116 +274,8 @@ public class Salesforce {
 			Header[] headers;
 			List<Cookie> cookies;
 			URI uri;
-			HttpGet get = new HttpGet("https://gmi.my.salesforce.com/");
-			
-			
-			
-			/**
-			 * 老方法登陆, Fluent API, 不成功
-			 */
-//			// 拿登陆使用的cookie
-//			httpResponse = Request.Get("https://gmi.my.salesforce.com/")
-//					.connectTimeout(20000)  
-//					.socketTimeout(20000)
-////				.addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393")
-//					.execute()
-//					.returnResponse();
-//			
-//			//查看所有header			
-//			System.out.println(httpResponse.getStatusLine());			
-//			headers = httpResponse.getAllHeaders();			
-//			for (Header h : headers)
-//				System.out.println(h.getName() + " ===> " + h.getValue());			
-//			System.out.println(line);
-////			//检查登录是否成功，即看redirect的地址有没有问题
-////			headers = httpResponse.getHeaders("location");
-////			System.out.println("location: " + headers[0].getValue());
-//			
-//			//打印Cookie
-//			headers = httpResponse.getHeaders("Set-Cookie");			
-//			if (headers.length <= 0) {
-//				System.out.println("未获得cookie有误，请核实!");
-//				return;			
-//			}else{
-//				text = headers[0].getValue();
-//				System.out.println("Set-Cookie: "+text);
-//				System.out.println(line);
-//				cookie = text.split(";", 2)[0]; // 拿BrowserID
-//				System.out.println(cookie);
-//			}
-//			
-//			//设置登录参数
-//			String pw = readInputLine("Please input your Salesforce password"); //从键盘读取密码
-//			forms = Form.form()
-//					.add("un", "shawn.peng@gmimarkets.com")
-//					.add("hasRememberUn", "true")
-//					.add("useSecure", "true")
-//					.add("username", "shawn.peng@gmimarkets.com")
-//					.add("pw", pw)
-//					.add("Login", "登录")
-////					.add("rememberUn", "on")
-//					.build();
-////			
-////			cookie = "BrowserId=Pi2EjrVTQkSI-sAjoTXXgQ";
-//			//登陆拿Cookie		
-//	        httpResponse = Request.Post("https://gmi.my.salesforce.com/")  
-//			        .connectTimeout(20000)
-//			        .socketTimeout(20000)
-//			        .addHeader("Cookie", cookie)
-//			        .bodyForm(forms, Consts.UTF_8)
-//			        .execute()
-//			        .returnResponse();
-//			
-//			//拿Cookie
-//			System.out.println(httpResponse.getStatusLine());			
-//			headers = httpResponse.getAllHeaders();			
-//			for (Header h : headers)
-//				System.out.println(h.getName() + " ===> " + h.getValue());			
-//			System.out.println(line);
-//			//看Entity
-//			text = EntityUtils.toString(httpResponse.getEntity(), Consts.UTF_8);
-//			System.out.println(text);
-//			//检查登录是否成功，即看redirect的地址有没有问题			
-//			headers = httpResponse.getHeaders("location");
-//			System.out.println("☆☆☆☆☆☆☆☆☆☆☆ 登陆成功！☆☆☆☆☆☆☆☆☆☆☆");
-//			System.out.println("location: " + headers[0].getValue());
-////			if (headers[0].getValue().split("?", 2)[0] != "https://gmi.my.salesforce.com/secur/frontdoor.jsp"){
-////				System.out.println("登陆失败，返回地址为： " + headers[0].getValue() + "\r\n请检查！") ;
-////				return;
-////			}
-//			//打印Cookie
-//			headers = httpResponse.getHeaders("Set-Cookie");
-//			for(Header h:headers){
-//				text = h.getName() + " ===> " + h.getValue();
-//				System.out.println(text);
-//				cookie = cookie + "; " + h.getValue().split(";", 2)[0];
-//				if (headers.length != 5) {
-//					System.out.println("cookie个数有误，登陆可能未成功，请核实!");
-////					return;
-//				}			
-//			}
-//			System.out.println(line);			
-//			System.out.println("Set-Cookie: " + cookie);
-//			System.out.println(line);
-			
-			
-			
-			
-			
-//			cookie = readInputLine("键入cookie");			
-//			// 登陆成功后要开始搞事情了
-//			response = Request.Get("https://gmi.my.salesforce.com/_ui/core/chatter/ui/ChatterPage")  
-//			        .connectTimeout(10000)  
-//			        .socketTimeout(10000)
-//			        .addHeader("Cookie", cookie)
-//			        .execute();
-//			        
-////			text = response.returnResponse().getStatusLine().toString();
-////			System.out.println(text + "\r\n" + line);
-//			text = response.returnContent().asString(Consts.UTF_8);
-//			
-//			System.out.println(text);
-//			System.out.println(line);
+			HttpGet get = new HttpGet("https://gmi.my.salesforce.com/");	
+
 			
 			//修改系统自动生成的入金case
 			// 转换日期格式成Salesforce格式
@@ -547,8 +413,7 @@ public class Salesforce {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}		
 		
 		
 	}
