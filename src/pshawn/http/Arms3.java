@@ -1,4 +1,4 @@
-package wzh.http;
+package pshawn.http;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import org.jsoup.select.Elements;
  * @author Shawn Peng
  *
  */
-public class main {
+public class Arms3 {
 
 	public static void main(String[] args) {
         //发送 GET 请求
