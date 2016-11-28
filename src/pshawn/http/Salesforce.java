@@ -86,11 +86,12 @@ public class Salesforce {
 				return;
 			
 			//修改入金case
-			String depositExcelRow =readInputLine("Please copy the deposit details from Excel and paste here as plain text in one line, columns splited by TAB. \r\nEnter \"exit\" to end");
+			String hint = "Please copy the deposit details from Excel and paste here as plain text in one line, columns splited by TAB. Or input \"exit\" to end";
+			String depositExcelRow =readInputLine(hint);
 			while(!depositExcelRow.equals("exit")){
 				salesforce.editDepositCase(
 						readDepositDetails(depositExcelRow));
-				depositExcelRow =readInputLine("Please copy the deposit details from Excel and paste here as plain text in one line, columns splited by TAB. \r\nEnter \"exit\" to end");
+				depositExcelRow =readInputLine(hint);
 			}
 			
 //			salesforce.editDepositCase(new HashMap<String, String>(20));
