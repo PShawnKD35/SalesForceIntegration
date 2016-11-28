@@ -185,10 +185,9 @@ public class Salesforce {
 		for(Cookie c : cookies){				
 			String domain = c.getDomain();
 			System.out.println(domain+ "\t" +c.getName() + "=" + c.getValue());
-			if (domain.contains("salesforce.com") && !domain.contains("ap4.salesforce.com")) {
-//				cookieStore.addCookie(c); //加入salesforce.com的cookie
+			if (domain.contains("salesforce.com") && !domain.contains("ap4.salesforce.com"))
 				cookie =c.getName() + "=" + c.getValue() + "; " + cookie;
-			}
+			
 		}
 		System.out.println(line);
 
@@ -240,8 +239,7 @@ public class Salesforce {
 		System.out.println(text);
 		
 //		//退出登录
-//		uri =new URI("https://gmi.my.salesforce.com/secur/logout.jsp");
-//		get.setURI(uri);
+//		HttpGet get = new HttpGet("https://gmi.my.salesforce.com/secur/logout.jsp");
 //		closeableHttpResponse = httpClient.execute(get, context);
 //		text = EntityUtils.toString(closeableHttpResponse.getEntity(), Consts.UTF_8);
 //		System.out.println(text);
