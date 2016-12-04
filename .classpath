@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="lib/httpclient/jna-platform-4.1.0.jar" sourcepath="docs/httpcomponents-client-4.5.2-src.zip"/>
 	<classpathentry kind="lib" path="lib/httpclient/fluent-hc-4.5.2.jar" sourcepath="docs/httpcomponents-client-4.5.2-src.zip"/>
 	<classpathentry kind="lib" path="lib/httpclient/httpclient-4.5.2.jar" sourcepath="docs/httpcomponents-client-4.5.2-src.zip"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.39-bin.jar" sourcepath="docs/mysql-connector-java-5.1.39-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
